@@ -21,8 +21,8 @@ public class PositionProtocolImpl implements PositionProtocol {
 	private double y = 0;
 	private double targetX = 0;
 	private double targetY = 0;
-	private double maxX = 500;
-	private double maxY = 500;
+	private double maxX = 1000;
+	private double maxY = 1000;
 	private int maxSpeed = 1;
 	private int timePause = 5000;
 	private double currentSpeed;

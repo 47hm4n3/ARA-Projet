@@ -26,7 +26,7 @@ public class Monitor extends JPanel implements Control {
 	
 	private final int position_pid;
 	//private final int election_pid;
-	//private final int emitter_pid;
+	private final int emitter_pid;
 	private final double time_slow;
 	
 	private final Dimension dimension_frame;
@@ -37,7 +37,7 @@ public class Monitor extends JPanel implements Control {
 		//election_pid = Configuration.getPid(prefix+"."+PAR_ELECTIONPID);
 		position_pid=Configuration.getPid(prefix+"."+PAR_POSITIONPID);
 		
-		//emitter_pid=Configuration.getPid(prefix+"."+PAR_EMITTER);
+		emitter_pid=Configuration.getPid(prefix+"."+PAR_EMITTER);
 		
 		time_slow=Configuration.getDouble(prefix+"."+PAR_TIMESLOW);
 		
@@ -92,7 +92,7 @@ public class Monitor extends JPanel implements Control {
 			Node n= Network.get(i);
 			PositionProtocol pos = (PositionProtocol) n.getProtocol(position_pid);
 			//ElectionProtocol elec = (ElectionProtocol) n.getProtocol(election_pid);
-			//Emitter emitter = (Emitter) n.getProtocol(emitter_pid);
+			Emitter emitter = (Emitter) n.getProtocol(emitter_pid);
 			int size = 10;
 			int center_x=toGraphicX( pos.getX());
 			int center_y=toGraphicY(pos.getY());
@@ -104,10 +104,10 @@ public class Monitor extends JPanel implements Control {
 			
 			g.setColor(Color.CYAN);
 						
-			//int size_scope = toGraphicX(emitter.getScope());
-			//int x_scope=center_x-size_scope;
-			//int y_scope=center_y-size_scope;
-			//g.drawOval(x_scope,y_scope, size_scope*2, size_scope*2);
+			int size_scope = toGraphicX(emitter.getScope());
+			int x_scope=center_x-size_scope;
+			int y_scope=center_y-size_scope;
+			g.drawOval(x_scope,y_scope, size_scope*2, size_scope*2);
 			
 			
 			g.setColor(Color.BLACK);
