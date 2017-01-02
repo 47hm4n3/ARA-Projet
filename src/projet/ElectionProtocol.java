@@ -5,7 +5,7 @@ import java.util.List;
 import peersim.edsim.EDProtocol;
 
 public interface ElectionProtocol extends EDProtocol {
-
+	
 	/*Indique si le site est en cours d'élection ou pas*/
 	public boolean isInElection();
 	

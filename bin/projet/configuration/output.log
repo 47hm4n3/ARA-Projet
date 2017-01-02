@@ -11,205 +11,114 @@ EDSimulator: running initializers
 - Running initializer init.rndlink: class peersim.dynamics.WireKOut
 - Running initializer init.sch: class peersim.edsim.CDScheduler
 - Running initializer init.vals: class peersim.vector.LinearDistribution
-EDSimulator: loaded controls [control.0]
-Current time: 0
-control.0: 1.0 1000.0 1000 500.5 83416.66666666667 1 1
-Current time: 10000000
-control.0: 37.5 919.0 1000 500.5 25724.159091250687 1 1
-Current time: 20000000
-control.0: 206.7109375 767.890625 1000 500.5 8096.807036889389 1 1
-Current time: 30000000
-control.0: 352.373046875 695.453125 1000 500.5 2578.022573176135 1 1
-Current time: 40000000
-control.0: 412.430419921875 625.474609375 1000 500.5 801.1082179446831 1 1
-Current time: 50000000
-control.0: 436.43787479400635 570.459858417511 1000 500.5 243.53994072762902 1 1
-Current time: 60000000
-control.0: 470.7608990445733 527.0359845032217 1000 500.49999999999994 74.13788674564383 1 2
-Current time: 70000000
-control.0: 483.6040476858616 518.0301055684686 1000 500.49999999999903 23.428974301677556 1 1
-Current time: 80000000
-control.0: 490.5196089811798 512.0301471857779 1000 500.4999999999993 7.285566419597019 1 1
-Current time: 90000000
-control.0: 494.97216907397836 506.0375954180854 1000 500.4999999999999 2.1798299307442246 1 1
-Current time: 100000000
-control.0: 497.18190345272336 503.5837144460532 1000 500.5000000000001 0.6073148838336206 1 1
-Current time: 110000000
-control.0: 498.54320551492475 502.3533156558903 1000 500.5 0.1786794435445898 1 2
-Current time: 120000000
-control.0: 499.4023441821402 501.4962048486104 1000 500.49999999999966 0.055257607540637785 1 1
-Current time: 130000000
-control.0: 500.0032071191514 501.09832936709677 1000 500.4999999999995 0.017914865984002482 1 1
-Current time: 140000000
-control.0: 500.2115701087355 500.83018846682955 1000 500.5000000000003 0.005681541785868155 1 1
-Current time: 150000000
-control.0: 500.34130672550015 500.6817038675913 1000 500.49999999999983 0.0018027434356275712 1 1
-Current time: 160000000
-control.0: 500.4099993828274 500.593872603867 1000 500.50000000000006 5.362825330674977E-4 1 1
-Current time: 170000000
-control.0: 500.45257293353984 500.54348273631905 1000 500.50000000000057 1.540724446790086E-4 1 1
-Current time: 180000000
-control.0: 500.4730336913324 500.5308245606462 1000 500.49999999999983 4.870521656989873E-5 2 1
-Current time: 190000000
-control.0: 500.48375224793585 500.5157654498322 1000 500.4999999999995 1.6009524787167412E-5 1 1
-Current time: 200000000
-control.0: 500.48865909872677 500.50651976294216 1000 500.50000000000017 5.077729859315717E-6 1 1
-Current time: 210000000
-control.0: 500.4951192430326 500.5047676794802 1000 500.5000000000002 1.6155684864646324E-6 1 1
-Current time: 220000000
-control.0: 500.4974085478983 500.502935896735 1000 500.50000000000045 5.105843169016166E-7 1 1
-Current time: 230000000
-control.0: 500.4987222960319 500.5016402188968 1000 500.5000000000002 1.6512563666543207E-7 1 1
-Current time: 240000000
-control.0: 500.49903235648463 500.50092451432386 1000 500.49999999999994 5.299286046125987E-8 1 1
-Current time: 250000000
-control.0: 500.49958979342233 500.50059026547086 1000 500.5000000000001 1.5440470612681545E-8 1 1
-Current time: 260000000
-control.0: 500.4996881991682 500.500274943262 1000 500.5000000000001 4.8652048911656945E-9 1 1
-Current time: 270000000
-control.0: 500.49977403242923 500.5001382754437 1000 500.4999999999995 2.0101744759906163E-9 1 1
-Current time: 280000000
-control.0: 500.49987495360983 500.50007640960587 1000 500.5 1.7479778052092316E-10 1 1
-Current time: 290000000
-control.0: 500.49994445650935 500.5000501190701 1000 500.5000000000004 0.0 1 1
-Current time: 300000000
-control.0: 500.4999661034419 500.50002345424616 1000 500.49999999999994 3.2046259762169247E-10 1 1
-Current time: 310000000
-control.0: 500.4999712575856 500.50001450012803 1000 500.5000000000001 0.0 1 1
-Current time: 320000000
-control.0: 500.49998996075124 500.50001003198986 1000 500.5000000000003 0.0 1 1
-Current time: 330000000
-control.0: 500.4999953242251 500.5000043994592 1000 500.50000000000045 0.0 1 1
-Current time: 340000000
-control.0: 500.4999966553132 500.5000031137919 1000 500.49999999999994 5.826592684030772E-11 2 1
-Current time: 350000000
-control.0: 500.49999822203824 500.50000161478096 1000 500.49999999999994 2.6219667078138473E-10 1 1
-Current time: 360000000
-control.0: 500.4999990494662 500.5000007140138 1000 500.4999999999997 4.0786148788215407E-10 1 1
-Current time: 370000000
-control.0: 500.49999953087456 500.5000003780667 1000 500.50000000000057 0.0 1 1
-Current time: 380000000
-control.0: 500.4999997027671 500.5000002330102 1000 500.50000000000006 0.0 1 1
-Current time: 390000000
-control.0: 500.49999980445176 500.5000001249846 1000 500.5000000000003 0.0 1 1
-Current time: 400000000
-control.0: 500.4999998909826 500.5000000637969 1000 500.50000000000017 0.0 2 1
-Current time: 410000000
-control.0: 500.4999999491945 500.50000003001117 1000 500.50000000000006 2.330637073612309E-10 1 1
-Current time: 420000000
-control.0: 500.49999997587577 500.500000020472 1000 500.5000000000005 0.0 1 1
-Current time: 430000000
-control.0: 500.4999999853711 500.5000000123341 1000 500.49999999999966 1.456648171007693E-10 1 1
-Current time: 440000000
-control.0: 500.4999999932832 500.500000006375 1000 500.5 0.0 1 1
-Current time: 450000000
-control.0: 500.4999999963538 500.50000000440656 1000 500.5000000000004 0.0 1 1
-Current time: 460000000
-control.0: 500.4999999981322 500.50000000189016 1000 500.4999999999998 4.952603781426156E-10 1 1
-Current time: 470000000
-control.0: 500.49999999882857 500.50000000100374 1000 500.5000000000001 2.913296342015386E-11 1 1
-Current time: 480000000
-control.0: 500.4999999993252 500.5000000005659 1000 500.49999999999983 8.739889026046158E-11 1 1
-Current time: 490000000
-control.0: 500.49999999949034 500.500000000275 1000 500.50000000000006 5.826592684030772E-11 1 1
-Current time: 500000000
-control.0: 500.49999999982185 500.500000000164 1000 500.50000000000006 2.6219667078138473E-10 1 1
-Current time: 510000000
-control.0: 500.4999999998772 500.5000000001006 1000 500.49999999999983 3.7872852446200017E-10 1 1
-Current time: 520000000
-control.0: 500.4999999999419 500.50000000005065 1000 500.4999999999994 7.574570489240003E-10 1 1
-Current time: 530000000
-control.0: 500.4999999999752 500.5000000000325 1000 500.5000000000001 0.0 1 2
-Current time: 540000000
-control.0: 500.49999999998687 500.5000000000167 1000 500.50000000000006 0.0 1 1
-Current time: 550000000
-control.0: 500.4999999999914 500.50000000000847 1000 500.5 5.826592684030772E-11 1 1
-Current time: 560000000
-control.0: 500.4999999999958 500.5000000000048 1000 500.5 0.0 1 2
-Current time: 570000000
-control.0: 500.49999999999693 500.50000000000296 1000 500.5 0.0 1 1
-Current time: 580000000
-control.0: 500.4999999999983 500.50000000000153 1000 500.5 0.0 1 1
-Current time: 590000000
-control.0: 500.49999999999886 500.5000000000009 1000 500.5 0.0 1 1
-Current time: 600000000
-control.0: 500.4999999999992 500.50000000000045 1000 500.5 0.0 1 3
-Current time: 610000000
-control.0: 500.49999999999966 500.5000000000003 1000 500.5 0.0 1 2
-Current time: 620000000
-control.0: 500.49999999999983 500.50000000000017 1000 500.5 0.0 4 1
-Current time: 630000000
-control.0: 500.4999999999999 500.5000000000001 1000 500.5 0.0 9 2
-Current time: 640000000
-control.0: 500.49999999999994 500.5 1000 500.5 0.0 10 990
-Current time: 650000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 660000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 670000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 680000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 690000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 700000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 710000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 720000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 730000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 740000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 750000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 760000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 770000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 780000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 790000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 800000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 810000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 820000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 830000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 840000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 850000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 860000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 870000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 880000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 890000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 900000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 910000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 920000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 930000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 940000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 950000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 960000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 970000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 980000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-Current time: 990000000
-control.0: 500.5 500.5 1000 500.5 0.0 1000 1000
-EDSimulator: queue is empty, quitting at time 999980413
+peersim.config.MissingParameterException: Parameter "control.monitor.electionprotocol" not found.
+At peersim.config.ConfigContainer.getStr:423
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+- Running initializer init.rndlink: class peersim.dynamics.WireKOut
+- Running initializer init.sch: class peersim.edsim.CDScheduler
+- Running initializer init.vals: class peersim.vector.LinearDistribution
+peersim.config.MissingParameterException: Parameter "protocol.ElectionProtocol" not found.
+At peersim.config.ConfigContainer.lookupPid:492
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+peersim.config.IllegalParameterException: Parameter "protocol.ElectionProtocol": Class ElectionProtocol has no ElectionProtocol(String) constructor
+At peersim.config.ConfigContainer.getInst:675
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+peersim.config.MissingParameterException: Parameter "control.monitor.electionprotocol" not found.
+At peersim.config.ConfigContainer.getStr:423
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+peersim.config.MissingParameterException: Parameter "protocol.ElectionProtocol" not found.
+At peersim.config.ConfigContainer.lookupPid:492
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+peersim.config.MissingParameterException: Parameter "control.monitor.electionprotocol" not found.
+At peersim.config.ConfigContainer.getStr:423
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+peersim.config.MissingParameterException: Parameter "protocol.ElectionProtocol" not found.
+At peersim.config.ConfigContainer.lookupPid:492
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+peersim.config.IllegalParameterException: Parameter "protocol.ElectionProtocol": Class ElectionProtocol has no ElectionProtocol(String) constructor
+At peersim.config.ConfigContainer.getInst:675
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+peersim.config.MissingParameterException: Parameter "protocol.PositionProtocol" not found.
+At peersim.config.ConfigContainer.lookupPid:492
+
+
+
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+peersim.config.MissingParameterException: Parameter "protocol.PositionProtocol" not found.
+At peersim.config.ConfigContainer.lookupPid:492

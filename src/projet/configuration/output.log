@@ -1,0 +1,136 @@
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+- Running initializer init.rndlink: class peersim.dynamics.WireKOut
+- Running initializer init.sch: class peersim.edsim.CDScheduler
+- Running initializer init.vals: class peersim.vector.LinearDistribution
+peersim.config.MissingParameterException: Parameter "control.monitor.electionprotocol" not found.
+At peersim.config.ConfigContainer.getStr:423
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+- Running initializer init.rndlink: class peersim.dynamics.WireKOut
+- Running initializer init.sch: class peersim.edsim.CDScheduler
+- Running initializer init.vals: class peersim.vector.LinearDistribution
+peersim.config.MissingParameterException: Parameter "protocol.ElectionProtocol" not found.
+At peersim.config.ConfigContainer.lookupPid:492
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+peersim.config.IllegalParameterException: Parameter "protocol.ElectionProtocol": Class ElectionProtocol has no ElectionProtocol(String) constructor
+At peersim.config.ConfigContainer.getInst:675
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+peersim.config.MissingParameterException: Parameter "control.monitor.electionprotocol" not found.
+At peersim.config.ConfigContainer.getStr:423
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+peersim.config.MissingParameterException: Parameter "protocol.ElectionProtocol" not found.
+At peersim.config.ConfigContainer.lookupPid:492
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+peersim.config.MissingParameterException: Parameter "control.monitor.electionprotocol" not found.
+At peersim.config.ConfigContainer.getStr:423
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+peersim.config.MissingParameterException: Parameter "protocol.ElectionProtocol" not found.
+At peersim.config.ConfigContainer.lookupPid:492
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+peersim.config.IllegalParameterException: Parameter "protocol.ElectionProtocol": Class ElectionProtocol has no ElectionProtocol(String) constructor
+At peersim.config.ConfigContainer.getInst:675
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+peersim.config.MissingParameterException: Parameter "protocol.PositionProtocol" not found.
+At peersim.config.ConfigContainer.lookupPid:492
+
+
+
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+peersim.config.MissingParameterException: Parameter "protocol.PositionProtocol" not found.
+At peersim.config.ConfigContainer.lookupPid:492
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 1234567890
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+peersim.config.MissingParameterException: Parameter "control.monitor.positionprotocol" not found.
+At peersim.config.ConfigContainer.getStr:423

@@ -1,0 +1,118 @@
+Messages : 
+ Types :
+ ELECTION
+ ACK
+ LEADER
+ PROBE
+ REPLY
+
+Node : 
+
+	Vars :
+	bool isSourceNode
+	bool inElection
+	Node parentNode
+	bool hasSentAck
+	Node leader
+	Node[] neighbors
+	Node[] awaitingAck
+	int    computationIdx
+	Message[] messages
+	Message[] replies
+
+rcv(mess){
+	if(mess.type != REPLY){
+		messages.add(mess)
+	}else{
+		replies.add(mess)
+	}
+}
+
+processElection(mess){
+	if(!inElection || isSuperiorSRC(mess.src)){
+		inElection = true
+		hasSentAck = false
+
+		parentNode = mess.sender
+		awaitingAck = neighbors - parentNode
+		src = mess.src
+		broadcast(ELECTION, awaitingAck)
+	}else{
+		send(ACK, mess.sender)
+	}		
+}
+
+processAck(mess){
+	if(mess != null && awaitingAck.size != 0){
+		prepAck = evalNode(mess)
+		awaitingAck.remove(mess.sender)
+	}else{
+		inElection = false
+		
+		if(!isSourceNode){
+			hasSentAck = true
+			send(ACK, parentNode)
+		}else{
+			broadcast(LEADER, neighbors)
+			inElection = false
+			leader = elected
+		}
+	}
+}
+
+processLeader(mess){
+	leader = mess.leader
+}
+
+processProbe(mess){
+	send(REPLY, mess.sender)	
+}
+
+checkNotRepliedMessages(){
+	// supprimer ceux qui n'ont pas reply dans le awaitingAck
+	if(awaitingAck.size == 0){
+		processAck(null)
+	}
+}
+
+triggerElection(){
+	isSourceNode = true
+	inElection = true
+	src += 1
+	constructElectionMessage (with src and id)
+	broadcast(ELECTION, neighbors)
+}
+
+main(){
+	init all the values
+
+	//Ajouter le check timeout à chaque passage de boucle
+
+	while(true){
+		mess = message.get(0)
+		if(mess != null){
+			
+			if(mess.type == ELECT)
+				processElection(mess)
+
+			if(mess.type == ACK)
+				processAck(mess)
+
+			if(mess.type == LEADER)
+				processLeader(mess)
+
+			if(mess.type == REPLY)
+				processReply(mess)
+
+			if(mess.type == PROBE)
+				processProbe(mess)
+
+		}else{
+			if(inElection){
+				broadcast(Probe, neighbors)
+			}else {
+				send(Probe, leader)
+			}
+		}
+	}
+}
