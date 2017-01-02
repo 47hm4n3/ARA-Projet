@@ -1,5 +1,7 @@
 package projet;
 
+import java.awt.Dimension;
+
 import peersim.edsim.EDProtocol;
 
 public interface PositionProtocol extends EDProtocol {
@@ -23,4 +25,5 @@ public interface PositionProtocol extends EDProtocol {
 	
 	/*Renvoie le temps d'immobilité*/
 	public int getTimePause();
+
 }

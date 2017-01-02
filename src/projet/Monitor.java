@@ -11,6 +11,7 @@ import peersim.config.Configuration;
 import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
+import peersim.edsim.EDSimulator;
 
 public class Monitor extends JPanel implements Control {
 
@@ -168,6 +169,9 @@ public class Monitor extends JPanel implements Control {
 	public boolean execute() {
 		if(frame == null){
 			init();
+		}
+		for(int i = 0; i < Network.size(); i++){
+			EDSimulator.add(0, null, Network.get(i), position_pid);
 		}
 		this.repaint();
 		try {

@@ -4,7 +4,11 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="lib" path="peersim-1.0.5/djep-1.0.0.jar"/>
 	<classpathentry kind="lib" path="peersim-1.0.5/jep-2.3.0.jar"/>
-	<classpathentry kind="lib" path="peersim-1.0.5/peersim-1.0.5.jar"/>
+	<classpathentry kind="lib" path="peersim-1.0.5/peersim-1.0.5.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/olivier/workspace/DevoirARA/peersim-1.0.5/doc/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="peersim-1.0.5/peersim-doclet.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
