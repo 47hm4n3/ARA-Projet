@@ -37,6 +37,10 @@ public class PositionProtocolImpl implements PositionProtocol {
 		//this.maxX = Double.parseDouble(PAR_MAXX_VAL);
 		String tmp[] = prefix.split("\\.");
 		protocol_id=Configuration.lookupPid(tmp[tmp.length - 1]);
+		this.x = CommonState.r.nextDouble()*(this.maxX - 0) + 0;
+		this.y = CommonState.r.nextDouble()*(this.maxY - 0) + 0;
+		this.targetX = this.x;
+		this.targetY = this.y;
 	}
 			
 	@Override
@@ -52,7 +56,7 @@ public class PositionProtocolImpl implements PositionProtocol {
 			pos.targetY = CommonState.r.nextDouble()*(pos.maxY - 0) + 0;
 			delay = timePause;
 			
-			pos.currentSpeed = CommonState.r.nextDouble()*(pos.maxSpeed - 0) + 0;
+			pos.currentSpeed = CommonState.r.nextDouble()*(pos.maxSpeed - 0.5) + 0.5;
 		}else{
 				pos.mvtX = Math.cos(pos.angle) * pos.currentSpeed;
 				pos.mvtY = Math.sin(pos.angle) * pos.currentSpeed;
@@ -67,9 +71,7 @@ public class PositionProtocolImpl implements PositionProtocol {
 				pos.x += pos.mvtX;
 				pos.y += pos.mvtY;
 		}
-		
-		
-		
+			
 	}
 
 	@Override
@@ -111,7 +113,12 @@ public class PositionProtocolImpl implements PositionProtocol {
 	@Override
 	public Protocol clone(){
 		try {
-			return (Protocol) super.clone();
+			PositionProtocolImpl cloned = (PositionProtocolImpl) super.clone();
+			cloned.x = CommonState.r.nextDouble()*(cloned.maxX - 0) + 0;
+			cloned.y = CommonState.r.nextDouble()*(cloned.maxY - 0) + 0;
+			cloned.targetX = cloned.x;
+			cloned.targetY = cloned.y;
+			return cloned;
 		} catch (CloneNotSupportedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
