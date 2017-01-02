@@ -3,7 +3,7 @@ package projet;
 import peersim.edsim.EDProtocol;
 
 public interface PositionProtocol extends EDProtocol {
-	
+	//val = (int) commonState.r.nextDouble();
 	/*Renvoie la coordonnée x, 0 <= x <=MaxX*/
 	public double getY();
 	
