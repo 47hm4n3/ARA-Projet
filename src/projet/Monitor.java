@@ -25,7 +25,7 @@ public class Monitor extends JPanel implements Control {
 
 	
 	private final int position_pid;
-	//private final int election_pid;
+	private final int election_pid;
 	private final int emitter_pid;
 	private final double time_slow;
 	
@@ -34,7 +34,7 @@ public class Monitor extends JPanel implements Control {
 	private final Dimension dimension_terrain;
 	private  JFrame frame = null;
 	public Monitor(String prefix) {
-		//election_pid = Configuration.getPid(prefix+"."+PAR_ELECTIONPID);
+		election_pid = Configuration.getPid(prefix+"."+PAR_ELECTIONPID);
 		position_pid=Configuration.getPid(prefix+"."+PAR_POSITIONPID);
 		
 		emitter_pid=Configuration.getPid(prefix+"."+PAR_EMITTER);
@@ -45,9 +45,6 @@ public class Monitor extends JPanel implements Control {
 		Node n = Network.get(0);
 		PositionProtocol pos = (PositionProtocol) n.getProtocol(position_pid);
 		
-		
-			
-	    
 		Dimension dim_screen = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 		dim_screen=new Dimension((int)(dim_screen.getWidth()*0.9), (int) (dim_screen.getHeight()*0.9));
 		dimension_terrain = new Dimension((int)pos.getMaxX(),  (int)pos.getMaxY());
@@ -94,7 +91,7 @@ public class Monitor extends JPanel implements Control {
 			//ElectionProtocol elec = (ElectionProtocol) n.getProtocol(election_pid);
 			Emitter emitter = (Emitter) n.getProtocol(emitter_pid);
 			int size = 10;
-			int center_x=toGraphicX( pos.getX());
+			int center_x=toGraphicX(pos.getX());
 			int center_y=toGraphicY(pos.getY());
 			
 			
@@ -172,6 +169,7 @@ public class Monitor extends JPanel implements Control {
 		}
 		for(int i = 0; i < Network.size(); i++){
 			EDSimulator.add(0, null, Network.get(i), position_pid);
+			EDSimulator.add(0, null, Network.get(i), election_pid);
 		}
 		this.repaint();
 		try {
