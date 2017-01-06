@@ -110,6 +110,7 @@ public class Monitor extends JPanel implements Control {
 			g.drawString("Node"+n.getID(), x_node+size, y_node);
 			g.drawString("value="+elec.getMyValue(), x_node+size, y_node+10);
 			g.drawString("Leader="+elec.getIDLeader(), x_node+size, y_node+20);
+			g.drawString("InElection="+elec.isInElection(), x_node+size, y_node+30);
 						
 			Long[] neighbors = new Long[elec.getNeighbors().size()];
 			neighbors=elec.getNeighbors().toArray(neighbors);

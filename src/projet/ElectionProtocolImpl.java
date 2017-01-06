@@ -25,6 +25,8 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 	private long parentNode;
 	private int election_pid;
 	private long timeout;
+	private List<Long> awaitingAck = new ArrayList<Long>();
+	private boolean isSourceNode;
 	
 	public ElectionProtocolImpl(String prefix){
 		emit_protocol_id = Configuration.getPid(prefix+"."+PAR_EMITTER);
@@ -43,24 +45,11 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 			
 			if(rcv_mess != null && rcv_mess.getTag() == Utils.ELECTION){
 				Object msgContent = rcv_mess.getContent();
+				ElectionMessageContent content = null;
 				if(msgContent != null){
-					ElectionMessageContent content = (ElectionMessageContent)rcv_mess.getContent();
+					content = (ElectionMessageContent)rcv_mess.getContent();
 				}
-				System.out.println("Election");
-				/*
-				if(!inElection || isSuperiorSRC(mess.src)){
-						inElection = true
-						hasSentAck = false
-				
-						parentNode = mess.sender
-						awaitingAck = neighbors - parentNode
-						src = mess.src
-						broadcast(ELECTION, awaitingAck)
-					}else{
-						send(ACK, mess.sender)
-					}	
-				 */
-				/*if(!inElection || content.getSnd() != null){
+				if(!inElection && content.getValue() > prot.myValue){
 					inElection =  true;
 					hasSentAck = false;
 					
@@ -68,30 +57,30 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 					int value = content.getValue();
 					
 					//On propage le message d'élection
-					broadcast(node, emitter, Utils.ELECTION);
+					broadcast(node, emitter, Utils.ELECTION, content, true);
 				}else{
 					emitter.emit(getNodeFromId(rcv_mess.getIdSrc()), new Message(node.getID(), rcv_mess.getIdSrc(), Utils.ACK, null, 0));
-				}*/
+				}
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.ACK){
 				System.out.println("Ack");
-				/*if(mess != null && awaitingAck.size != 0){
-					prepAck = evalNode(mess)
-					awaitingAck.remove(mess.sender)
+				if(prot.awaitingAck.size() != 0){
+					//prepAck = evalNode(mess)
+					prot.awaitingAck.remove(rcv_mess.getIdSrc());
 				}else{
-					inElection = false
+					prot.inElection = false;
 					
-					if(!isSourceNode){
-						hasSentAck = true
-						send(ACK, parentNode)
+					if(!prot.isSourceNode){
+						prot.hasSentAck = true;
+						emitter.emit(node, new Message(node.getID(),prot.parentNode, Utils.ACK, null, 0));
 					}else{
-						broadcast(LEADER, neighbors)
-						inElection = false
-						leader = elected
+						this.broadcast(node, emitter, Utils.LEADER, null, true);
+						inElection = false;
+						//leaderId = elected;
 					}
-				}*/
+				}
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.LEADER){
 				System.out.println("Leader");
-				//leaderId = (long)rcv_mess.getContent();
+				prot.leaderId = (long)rcv_mess.getContent();
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.PROBE){
 				emitter.emit(node, new Message(node.getID(),rcv_mess.getIdSrc(), Utils.REPLY, rcv_mess.getContent(), 0));
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.REPLY){
@@ -99,10 +88,8 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 					prot.neighbors.add(rcv_mess.getIdSrc());
 				}
 			}else{
-				//Vu que je n'ai rien à traiter, vlan ! Je heartbeat mes voisins
-				/*code de probe / broadcast */
 				prot.timeout = System.currentTimeMillis() + 10;
-				broadcast(node, emitter, Utils.PROBE, prot.timeout);
+				broadcast(node, emitter, Utils.PROBE, prot.timeout, false);
 			}
 			
 			
@@ -140,9 +127,9 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 			ElectionProtocolImpl prot = (ElectionProtocolImpl)super.clone();
 			prot.myValue = CommonState.r.nextInt()*(1 - 0) + 0;
 			prot.neighbors = new ArrayList<Long>();
+			prot.awaitingAck = new ArrayList<Long>();
 			return prot;
 		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -157,10 +144,13 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 		return null;
 	}
 	
-	private void broadcast(Node node, Emitter emitter, String msgTag, Object content){
+	private void broadcast(Node node, Emitter emitter, String msgTag, Object content, boolean toNeighborsOnly){
+		ElectionProtocolImpl prot = (ElectionProtocolImpl) node.getProtocol(election_pid);
 		for(int i =0; i < Network.size(); i++){
 			Node nodal = Network.get(i);
-			emitter.emit(node, new Message(node.getID(), nodal.getID(), msgTag, content, this.emit_protocol_id));
+			if(!toNeighborsOnly || (toNeighborsOnly && prot.neighbors.contains(nodal.getID()))){
+				emitter.emit(node, new Message(node.getID(), nodal.getID(), msgTag, content, this.emit_protocol_id));
+			}
 		}
 	}
 }
