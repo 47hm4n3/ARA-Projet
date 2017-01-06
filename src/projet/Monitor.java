@@ -54,6 +54,9 @@ public class Monitor extends JPanel implements Control {
 		
 		dimension_frame=new Dimension(width, height);
 		
+		for(int i = 0; i < Network.size(); i++){
+			EDSimulator.add(0, null, Network.get(i), election_pid);
+		}
 	}
 	
 	
@@ -88,7 +91,7 @@ public class Monitor extends JPanel implements Control {
 		for(int i = 0 ; i< Network.size() ; i++){
 			Node n= Network.get(i);
 			PositionProtocol pos = (PositionProtocol) n.getProtocol(position_pid);
-			//ElectionProtocol elec = (ElectionProtocol) n.getProtocol(election_pid);
+			ElectionProtocol elec = (ElectionProtocol) n.getProtocol(election_pid);
 			Emitter emitter = (Emitter) n.getProtocol(emitter_pid);
 			int size = 10;
 			int center_x=toGraphicX(pos.getX());
@@ -109,27 +112,27 @@ public class Monitor extends JPanel implements Control {
 			
 			g.setColor(Color.BLACK);
 			g.drawString("Node"+n.getID(), x_node+size, y_node);
-			//g.drawString("value="+elec.getMyValue(), x_node+size, y_node+10);
-			//g.drawString("Leader="+elec.getIDLeader(), x_node+size, y_node+20);
+			g.drawString("value="+elec.getMyValue(), x_node+size, y_node+10);
+			g.drawString("Leader="+elec.getIDLeader(), x_node+size, y_node+20);
 						
-			//Long[] neighbors = new Long[elec.getNeighbors().size()];
-			//neighbors=elec.getNeighbors().toArray(neighbors);
+			Long[] neighbors = new Long[elec.getNeighbors().size()];
+			neighbors=elec.getNeighbors().toArray(neighbors);
 			
-			/*for(Long id : neighbors){
+			for(Long id : neighbors){
 				Node neighbor = getNodefromId(id);
 				PositionProtocol pos_neigh = (PositionProtocol) neighbor.getProtocol(position_pid);
 				int center_x_neighbor=toGraphicX( pos_neigh.getX());
 				int center_y_neighbor=toGraphicY(pos_neigh.getY());
 				g.drawLine(center_x, center_y, center_x_neighbor, center_y_neighbor);
-			}*/
+			}
 			
-			//if(elec.isInElection()){
-			//	g.setColor(Color.PINK);
-			//}else if(elec.getIDLeader() == n.getID()){
-			//	g.setColor(Color.red);
-			//}else{	
-			//	g.setColor(Color.GREEN);
-			//}
+			if(elec.isInElection()){
+				g.setColor(Color.PINK);
+			}else if(elec.getIDLeader() == n.getID()){
+				g.setColor(Color.red);
+			}else{	
+				g.setColor(Color.GREEN);
+			}
 			
 			g.fillOval(x_node,y_node, size, size);
 			

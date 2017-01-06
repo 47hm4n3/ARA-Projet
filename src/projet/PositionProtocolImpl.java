@@ -71,7 +71,6 @@ public class PositionProtocolImpl implements PositionProtocol {
 				pos.x += pos.mvtX;
 				pos.y += pos.mvtY;
 		}
-			
 	}
 
 	@Override
