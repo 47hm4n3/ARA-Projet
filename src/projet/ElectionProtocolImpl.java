@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import peersim.config.Configuration;
+import peersim.core.CommonState;
 import peersim.core.Network;
 import peersim.core.Node;
 import peersim.core.Protocol;
@@ -14,7 +15,7 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 	
 	private boolean inElection;
 	private long leaderId;
-	private int myValue;
+	protected int myValue;
 	private List<Long> neighbors = new ArrayList<Long>();
 	
 	private static final String PAR_EMITTER = "emitter";
@@ -23,11 +24,13 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 	private boolean hasSentAck;
 	private long parentNode;
 	private int election_pid;
+	private long timeout;
 	
 	public ElectionProtocolImpl(String prefix){
 		emit_protocol_id = Configuration.getPid(prefix+"."+PAR_EMITTER);
 		String tmp[] = prefix.split("\\.");
 		election_pid = Configuration.lookupPid(tmp[tmp.length - 1]);
+		this.myValue = CommonState.r.nextInt()*(1 - 0) + 0;
 	}
 	
 	@Override
@@ -88,17 +91,24 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 				//leaderId = (long)rcv_mess.getContent();
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.PROBE){
 				System.out.println("Probe");
-				emitter.emit(getNodeFromId(rcv_mess.getIdSrc()), new Message(node.getID(),rcv_mess.getIdSrc(), Utils.REPLY, null, 0));
+				emitter.emit(node, new Message(node.getID(),rcv_mess.getIdSrc(), Utils.REPLY, null, 0));
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.REPLY){
 				System.out.println("Reply");
-				
+				if(!this.neighbors.contains(rcv_mess.getIdSrc()));
+					this.neighbors.add(rcv_mess.getIdSrc());
 			}else{
 				System.out.println("Nothing");
 				//Vu que je n'ai rien à traiter, vlan ! Je heartbeat mes voisins
 				/*code de probe / broadcast */
 				broadcast(node, emitter, Utils.PROBE);
+				this.timeout = System.currentTimeMillis() + 2;
 			}
-		//EDSimulator.add(0, null, node, election_pid);
+			
+			long time = System.currentTimeMillis();
+			if(time > timeout){
+				System.out.println("Time out !");
+				this.neighbors.clear();
+			}
 	}
 
 	@Override
@@ -127,7 +137,9 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 	@Override
 	public Protocol clone(){
 		try {
-			return (Protocol) super.clone();
+			ElectionProtocolImpl prot = (ElectionProtocolImpl)super.clone();
+			prot.myValue = CommonState.r.nextInt()*(1 - 0) + 0;
+			return prot;
 		} catch (CloneNotSupportedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

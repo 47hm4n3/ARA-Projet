@@ -53,10 +53,6 @@ public class Monitor extends JPanel implements Control {
 		int height = dimension_terrain.getHeight() > dim_screen.getHeight() ? (int)dim_screen.getHeight(): (int)dimension_terrain.getHeight();
 		
 		dimension_frame=new Dimension(width, height);
-		
-		for(int i = 0; i < Network.size(); i++){
-			EDSimulator.add(0, null, Network.get(i), election_pid);
-		}
 	}
 	
 	
