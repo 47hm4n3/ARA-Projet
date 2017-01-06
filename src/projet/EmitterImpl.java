@@ -9,7 +9,7 @@ import peersim.edsim.EDSimulator;
 public class EmitterImpl implements Emitter {
 	
 	private int latency;
-	private int scope = 50;
+	private int scope = 150;
 	private int pos_protocol_id;
 	private int emit_protocol_id;
 	private int election_pid;
@@ -39,7 +39,6 @@ public class EmitterImpl implements Emitter {
 						EDSimulator.add(this.getLatency(), msg, node, election_pid);
 				}
 			}
-			
 		}
 	}
 

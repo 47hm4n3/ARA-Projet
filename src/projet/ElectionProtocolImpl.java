@@ -31,11 +31,14 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 		String tmp[] = prefix.split("\\.");
 		election_pid = Configuration.lookupPid(tmp[tmp.length - 1]);
 		this.myValue = CommonState.r.nextInt()*(1 - 0) + 0;
+		this.neighbors.clear();
 	}
 	
 	@Override
 	public void processEvent(Node node, int prot_id, Object msg) {
+		long time = System.currentTimeMillis();
 			Emitter emitter = (EmitterImpl)node.getProtocol(emit_protocol_id);
+			ElectionProtocolImpl prot = (ElectionProtocolImpl) node.getProtocol(election_pid);
 			Message rcv_mess = (Message) msg;
 			
 			if(rcv_mess != null && rcv_mess.getTag() == Utils.ELECTION){
@@ -90,24 +93,21 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 				System.out.println("Leader");
 				//leaderId = (long)rcv_mess.getContent();
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.PROBE){
-				System.out.println("Probe");
-				emitter.emit(node, new Message(node.getID(),rcv_mess.getIdSrc(), Utils.REPLY, null, 0));
+				emitter.emit(node, new Message(node.getID(),rcv_mess.getIdSrc(), Utils.REPLY, rcv_mess.getContent(), 0));
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.REPLY){
-				System.out.println("Reply");
-				if(!this.neighbors.contains(rcv_mess.getIdSrc()));
-					this.neighbors.add(rcv_mess.getIdSrc());
+				if(!prot.neighbors.contains(rcv_mess.getIdSrc())){
+					prot.neighbors.add(rcv_mess.getIdSrc());
+				}
 			}else{
-				System.out.println("Nothing");
 				//Vu que je n'ai rien à traiter, vlan ! Je heartbeat mes voisins
 				/*code de probe / broadcast */
-				broadcast(node, emitter, Utils.PROBE);
-				this.timeout = System.currentTimeMillis() + 2;
+				prot.timeout = System.currentTimeMillis() + 10;
+				broadcast(node, emitter, Utils.PROBE, prot.timeout);
 			}
 			
-			long time = System.currentTimeMillis();
-			if(time > timeout){
-				System.out.println("Time out !");
-				this.neighbors.clear();
+			
+			if(time > prot.timeout){
+				prot.neighbors.clear();
 			}
 	}
 
@@ -139,6 +139,7 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 		try {
 			ElectionProtocolImpl prot = (ElectionProtocolImpl)super.clone();
 			prot.myValue = CommonState.r.nextInt()*(1 - 0) + 0;
+			prot.neighbors = new ArrayList<Long>();
 			return prot;
 		} catch (CloneNotSupportedException e) {
 			// TODO Auto-generated catch block
@@ -156,10 +157,10 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 		return null;
 	}
 	
-	private void broadcast(Node node, Emitter emitter, String msgTag){
+	private void broadcast(Node node, Emitter emitter, String msgTag, Object content){
 		for(int i =0; i < Network.size(); i++){
 			Node nodal = Network.get(i);
-			emitter.emit(node, new Message(node.getID(), nodal.getID(), msgTag, null, this.emit_protocol_id));
+			emitter.emit(node, new Message(node.getID(), nodal.getID(), msgTag, content, this.emit_protocol_id));
 		}
 	}
 }
