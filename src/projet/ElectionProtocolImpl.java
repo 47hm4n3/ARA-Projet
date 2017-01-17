@@ -42,9 +42,14 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 	@Override
 	public void processEvent(Node node, int prot_id, Object msg) {
 		long time = CommonState.getIntTime();
+		//long time = System.currentTimeMillis();
+		
 			Emitter emitter = (EmitterImpl)node.getProtocol(emit_protocol_id);
 			ElectionProtocolImpl prot = (ElectionProtocolImpl) node.getProtocol(election_pid);
 			Message rcv_mess = (Message) msg;
+			
+			boolean runElection = true;
+			if(runElection){
 			// Election
 			if(rcv_mess != null && rcv_mess.getTag() == Utils.ELECTION){
 				
@@ -107,10 +112,12 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 				emitter.emit(node, new Message(node.getID(), node.getID(),Utils.BEACON, prot.leaderTimeout, this.emit_protocol_id));
 			}else{
 				System.out.println("PROBE");
-				prot.timeout = CommonState.getIntTime() + (emitter.getLatency()*2)*Network.size();
-				broadcast(node, emitter, Utils.PROBE, prot.timeout, false);
+				if(time > prot.timeout/2){
+					prot.timeout = time + (emitter.getLatency()*2)*Network.size();
+					broadcast(node, emitter, Utils.PROBE, prot.timeout, false);
+				}
 				
-				if(prot.leaderId == node.getID() && !prot.inElection){
+				if(prot.leaderId == node.getID() && !prot.inElection && time > prot.leaderTimeout/2){
 					System.out.println("SEND BEACON");
 					prot.leaderTimeout = time + ((emitter.getLatency()*2)*Network.size());
 					broadcast(node, emitter, Utils.BEACON, prot.leaderTimeout, true);
@@ -122,13 +129,15 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 				prot.neighbors.clear();
 			}
 			
-			if(time > prot.leaderTimeout){
+			if(time > prot.leaderTimeout && !prot.inElection){
 				prot.triggerElection(prot, node, emitter);
+			}
+			
 			}
 	}
 	
 	public void triggerElection(ElectionProtocolImpl prot, Node node, Emitter emitter){
-		System.out.println("Trigger Election"+node.getID());
+		System.out.println("Trigger Election : "+node.getID());
 		prot.isSourceNode = true;
 		prot.inElection = true;
 		prot.electionId += 1;
