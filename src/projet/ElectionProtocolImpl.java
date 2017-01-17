@@ -27,6 +27,9 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 	private long timeout;
 	private List<Long> awaitingAck = new ArrayList<Long>();
 	private boolean isSourceNode;
+	private ElectionMessageContent prepAck;
+	private long electionId;
+	private double leaderTimeout;
 	
 	public ElectionProtocolImpl(String prefix){
 		emit_protocol_id = Configuration.getPid(prefix+"."+PAR_EMITTER);
@@ -38,64 +41,107 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 	
 	@Override
 	public void processEvent(Node node, int prot_id, Object msg) {
-		long time = System.currentTimeMillis();
+		long time = CommonState.getIntTime();
 			Emitter emitter = (EmitterImpl)node.getProtocol(emit_protocol_id);
 			ElectionProtocolImpl prot = (ElectionProtocolImpl) node.getProtocol(election_pid);
 			Message rcv_mess = (Message) msg;
-			
+			// Election
 			if(rcv_mess != null && rcv_mess.getTag() == Utils.ELECTION){
+				
 				Object msgContent = rcv_mess.getContent();
 				ElectionMessageContent content = null;
 				if(msgContent != null){
 					content = (ElectionMessageContent)rcv_mess.getContent();
 				}
-				if(!inElection && content.getValue() > prot.myValue){
-					inElection =  true;
-					hasSentAck = false;
+				
+				// Si  not inELECTION
+				if(!inElection && content.getIdElection() >= prot.electionId){
+					prot.inElection =  true;
+					prot.hasSentAck = false;
+					prot.electionId = content.getIdElection();
 					
-					parentNode = rcv_mess.getIdSrc();
-					int value = content.getValue();
+					prot.parentNode = rcv_mess.getIdSrc();
+					int value = content.getLeaderVal();
 					
 					//On propage le message d'élection
 					broadcast(node, emitter, Utils.ELECTION, content, true);
+				// Sinon on renvoie un ACK
 				}else{
-					emitter.emit(getNodeFromId(rcv_mess.getIdSrc()), new Message(node.getID(), rcv_mess.getIdSrc(), Utils.ACK, null, 0));
+					emitter.emit(node, new Message(node.getID(), rcv_mess.getIdSrc(), Utils.ACK, rcv_mess.getContent(), this.emit_protocol_id));
 				}
+			// Si ACK
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.ACK){
+				
 				System.out.println("Ack");
 				if(prot.awaitingAck.size() != 0){
-					//prepAck = evalNode(mess)
+					prot.prepAck = evalNode(((ElectionMessageContent)rcv_mess.getContent()), prot);
 					prot.awaitingAck.remove(rcv_mess.getIdSrc());
 				}else{
 					prot.inElection = false;
 					
 					if(!prot.isSourceNode){
 						prot.hasSentAck = true;
-						emitter.emit(node, new Message(node.getID(),prot.parentNode, Utils.ACK, null, 0));
+						emitter.emit(node, new Message(node.getID(),prot.parentNode, Utils.ACK, prot.prepAck, this.emit_protocol_id));
 					}else{
-						this.broadcast(node, emitter, Utils.LEADER, null, true);
-						inElection = false;
-						//leaderId = elected;
+						this.broadcast(node, emitter, Utils.LEADER, ((ElectionMessageContent)rcv_mess.getContent()).getLeaderId(), true);
+						prot.leaderId = ((ElectionMessageContent)rcv_mess.getContent()).getLeaderId();
 					}
 				}
+			// Si LEADER 
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.LEADER){
+			
 				System.out.println("Leader");
 				prot.leaderId = (long)rcv_mess.getContent();
+			
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.PROBE){
-				emitter.emit(node, new Message(node.getID(),rcv_mess.getIdSrc(), Utils.REPLY, rcv_mess.getContent(), 0));
+				
+				emitter.emit(node, new Message(node.getID(),rcv_mess.getIdSrc(), Utils.REPLY, rcv_mess.getContent(), this.emit_protocol_id));
+			
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.REPLY){
 				if(!prot.neighbors.contains(rcv_mess.getIdSrc())){
 					prot.neighbors.add(rcv_mess.getIdSrc());
 				}
+			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.BEACON && !prot.inElection){
+				prot.leaderTimeout = time + ((emitter.getLatency()*2)*Network.size());
+				broadcast(node, emitter, Utils.BEACON, prot.leaderTimeout, true);
+				emitter.emit(node, new Message(node.getID(), node.getID(),Utils.BEACON, prot.leaderTimeout, this.emit_protocol_id));
 			}else{
-				prot.timeout = System.currentTimeMillis() + 10;
+				System.out.println("PROBE");
+				prot.timeout = CommonState.getIntTime() + (emitter.getLatency()*2)*Network.size();
 				broadcast(node, emitter, Utils.PROBE, prot.timeout, false);
+				
+				if(prot.leaderId == node.getID() && !prot.inElection){
+					System.out.println("SEND BEACON");
+					prot.leaderTimeout = time + ((emitter.getLatency()*2)*Network.size());
+					broadcast(node, emitter, Utils.BEACON, prot.leaderTimeout, true);
+					emitter.emit(node, new Message(node.getID(), node.getID(),Utils.BEACON, prot.leaderTimeout, this.emit_protocol_id));
+				}
 			}
-			
 			
 			if(time > prot.timeout){
 				prot.neighbors.clear();
 			}
+			
+			if(time > prot.leaderTimeout){
+				prot.triggerElection(prot, node, emitter);
+			}
+	}
+	
+	public void triggerElection(ElectionProtocolImpl prot, Node node, Emitter emitter){
+		System.out.println("Trigger Election"+node.getID());
+		prot.isSourceNode = true;
+		prot.inElection = true;
+		prot.electionId += 1;
+		prot.leaderId = node.getID();
+		ElectionMessageContent content = new ElectionMessageContent(node.getID(), prot.getMyValue(), prot.electionId, node.getID(), this.emit_protocol_id);
+		this.broadcast(node, emitter, Utils.ELECTION, content, true);
+	}
+
+	private ElectionMessageContent evalNode(ElectionMessageContent content, ElectionProtocolImpl prot) {
+		if(content.getLeaderVal() > prot.prepAck.getLeaderVal())
+			return content;
+		else 
+			return prot.prepAck;
 	}
 
 	@Override
@@ -105,19 +151,16 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 
 	@Override
 	public long getIDLeader() {
-		// TODO Auto-generated method stub
 		return this.leaderId;
 	}
 
 	@Override
 	public int getMyValue() {
-		// TODO Auto-generated method stub
 		return this.myValue;
 	}
 
 	@Override
 	public List<Long> getNeighbors() {
-		// TODO Auto-generated method stub
 		return this.neighbors;
 	}
 	
