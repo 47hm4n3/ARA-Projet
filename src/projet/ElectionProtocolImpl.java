@@ -134,9 +134,9 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.REPLY){
 				if(!prot.neighbors.contains(rcv_mess.getIdSrc())){
 					prot.neighbors.add(rcv_mess.getIdSrc());
+					ElectionMessageContent content = new ElectionMessageContent(prot.leaderId, prot.myValue, prot.electionId, prot.electInitId, 0);
+					emitter.emit(node,  new Message(node.getID(), rcv_mess.getIdSrc(), Utils.LEADER, content, this.emit_protocol_id));
 				}
-				ElectionMessageContent content = new ElectionMessageContent(prot.leaderId, prot.myValue, prot.electionId, prot.electInitId, 0);
-				emitter.emit(node,  new Message(node.getID(), rcv_mess.getIdSrc(), Utils.LEADER, content, this.emit_protocol_id));
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.BEACON && !prot.inElection){
 				prot.leaderTimeout = time + ((emitter.getLatency()*2)*Network.size());
 				//broadcast(node, emitter, Utils.BEACON, prot.leaderTimeout, true);
@@ -165,6 +165,7 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 				}else{
 					this.broadcast(node, emitter, Utils.LEADER, prot.prepAck.getContent(), true);
 					prot.leaderId =((ElectionMessageContent)prot.prepAck.getContent()).getLeaderId();
+					prot.inElection = false;
 				}
 				
 			}
