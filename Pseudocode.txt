@@ -108,11 +108,7 @@ main(){
 				processProbe(mess)
 
 		}else{
-			if(inElection){
-				broadcast(Probe, neighbors)
-			}else {
-				send(Probe, leader)
-			}
+			broadcast(Probe, neighbors)	
 		}
 	}
 }

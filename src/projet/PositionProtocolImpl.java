@@ -46,10 +46,7 @@ public class PositionProtocolImpl implements PositionProtocol {
 	@Override
 	public void processEvent(Node node, int arg1, Object arg2) {
 		PositionProtocolImpl pos = (PositionProtocolImpl) node.getProtocol(protocol_id);
-		// TODO Auto-generated method stub
-
-		if(node.getID() == 9)
-		System.out.println(node.getID()+" - x: "+pos.x+" y : "+pos.y);
+		
 		int delay = 0;
 		pos.angle = Math.atan2(pos.targetY - pos.y, pos.targetX - pos.x);
 		
