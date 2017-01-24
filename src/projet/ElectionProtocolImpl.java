@@ -8,7 +8,6 @@ import peersim.core.CommonState;
 import peersim.core.Network;
 import peersim.core.Node;
 import peersim.core.Protocol;
-import peersim.edsim.EDSimulator;
 import projet.messages.contents.ElectionMessageContent;
 
 public class ElectionProtocolImpl implements ElectionProtocol {
@@ -32,6 +31,7 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 	private long electInitId;
 	private double leaderTimeout;
 	private Message standByLeaderMess;
+	private int leaderVal;
 	
 	public ElectionProtocolImpl(String prefix){
 		emit_protocol_id = Configuration.getPid(prefix+"."+PAR_EMITTER);
@@ -54,13 +54,14 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 			ElectionProtocolImpl prot = (ElectionProtocolImpl) node.getProtocol(election_pid);
 			Message rcv_mess = (Message) msg;
 			
-			boolean runElection = true;
-			if(runElection){
+			//boolean runElection = true;
+			//if(runElection){
+				// Si Premiere execution
 				if(prot.leaderId == -1){
 					//prot.triggerElection(prot);
 					prot.leaderId = node.getID();
 				}
-			// Election
+				// Election
 				if(time > prot.timeout){
 					prot.neighbors.clear();
 				}
@@ -110,12 +111,15 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.LEADER){
 				ElectionMessageContent content = ((ElectionMessageContent)rcv_mess.getContent());
 				
-				System.out.println("Leader");
-				if(prot.inElection && content.getIdElection() == prot.electionId && content.getIdElecInit() == prot.electInitId){
+				if(prot.inElection && (content.getIdElection() == prot.electionId) && (content.getIdElecInit() == prot.electInitId)){
+					System.out.println("Leader   "+node.getID()+" leader elu "+content.getLeaderId()+" source "+rcv_mess.getIdSrc());
+
 					// C'est bien mon election et tout braaaah
+					prot.leaderTimeout = time + ((emitter.getLatency()*2)*(Network.size()-1));
 					prot.leaderId = content.getLeaderId();
+					prot .leaderVal = content.getLeaderVal();
 					prot.inElection = false;
-					
+					broadcast(node, emitter, Utils.LEADER, content, true);
 				}
 				if(!(content.getIdElection() == prot.electionId && content.getIdElecInit() == prot.electInitId)){
 					if(inElection){
@@ -123,7 +127,16 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 						prot.standByLeaderMess = evalNode(rcv_mess, prot.standByLeaderMess);
 						
 					}else{
-						
+						// C'est une meilleur election et tout braaaah
+						if ((content.getLeaderVal() > prot.leaderVal) || ((content.getLeaderVal() == prot.leaderVal) && (content.getLeaderId() > prot.leaderId))  ){
+							System.out.println("Leader   "+node.getID()+" leader elu "+content.getLeaderId()+" source "+rcv_mess.getIdSrc());
+
+							prot.leaderTimeout = time + ((emitter.getLatency()*2)*(Network.size()-1));
+							prot.leaderId = content.getLeaderId();
+							prot .leaderVal = content.getLeaderVal();
+							prot.inElection = false;
+							broadcast(node, emitter, Utils.LEADER, content, true);
+						}
 					}
 				}
 				
@@ -139,13 +152,14 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 				}
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.BEACON && !prot.inElection){
 				prot.leaderTimeout = time + ((emitter.getLatency()*2)*Network.size());
-				//broadcast(node, emitter, Utils.BEACON, prot.leaderTimeout, true);
+				broadcast(node, emitter, Utils.BEACON, prot.leaderTimeout, true);
 				//emitter.emit(node, new Message(node.getID(), node.getID(),Utils.BEACON, prot.leaderTimeout, this.emit_protocol_id));
 			}else{
 				//System.out.println("PROBE");
 				if(time > prot.timeout){
 					prot.timeout = time + (emitter.getLatency()*2);
 					broadcast(node, emitter, Utils.PROBE, prot.timeout, false);
+					// TODO numero sequence dans le beacon
 				}
 				
 				if(prot.leaderId == node.getID() && !prot.inElection && time > prot.leaderTimeout){
@@ -170,7 +184,7 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 				
 			}
 			
-		}
+		//}
 	}
 	
 	public void triggerElection(ElectionProtocolImpl prot, Node node, Emitter emitter){
