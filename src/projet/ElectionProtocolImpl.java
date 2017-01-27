@@ -1,7 +1,9 @@
 package projet;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import peersim.config.Configuration;
 import peersim.core.CommonState;
@@ -23,15 +25,25 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 	private boolean hasSentAck;
 	private long parentNode;
 	private int election_pid;
-	private long timeout;
+
 	private List<Long> awaitingAck = new ArrayList<Long>();
 	private boolean isSourceNode;
 	private Message prepAck;
 	private long electionId;
 	private long electInitId;
-	private double leaderTimeout;
+
 	private Message standByLeaderMess;
 	private int leaderVal;
+
+	
+	//HashMap avec <id du noeud, un timer perso (initialisé a timeout et décrémenté a chhaque appel du process event)>
+	private HashMap<Long, Integer> neighborTimeout= new HashMap<Long, Integer>(); 
+	private int DELTA;
+	
+	private int timeoutOld=0;
+	private int timeoutNow;
+	private double leaderTimeout = DELTA;
+	private long timeout = DELTA;
 	
 	public ElectionProtocolImpl(String prefix){
 		emit_protocol_id = Configuration.getPid(prefix+"."+PAR_EMITTER);
@@ -41,18 +53,37 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 		this.myValue = (int)(CommonState.r.nextDouble()*Network.size()*3);
 		this.neighbors.clear();
 		this.timeout = CommonState.getIntTime();
-		this.leaderTimeout = CommonState.getIntTime();
+		this.leaderTimeout = DELTA;
 		this.leaderId = -1;
 	}
 	
 	@Override
 	public void processEvent(Node node, int prot_id, Object msg) {
-		long time = CommonState.getIntTime();
+		//long time = CommonState.getIntTime();
 		//long time = System.currentTimeMillis();
 		
 			Emitter emitter = (EmitterImpl)node.getProtocol(emit_protocol_id);
 			ElectionProtocolImpl prot = (ElectionProtocolImpl) node.getProtocol(election_pid);
 			Message rcv_mess = (Message) msg;
+			DELTA = ((emitter.getLatency()*2)*(Network.size()-1));
+			ArrayList<Long> toDelete = new ArrayList<Long>();
+			timeoutNow = CommonState.getIntTime();
+			for (Map.Entry<Long, Integer> entry : neighborTimeout.entrySet()){
+				int val = entry.getValue()-(timeoutNow-timeoutOld);
+				
+				neighborTimeout.put(entry.getKey(), val);
+				if (entry.getValue() <= 0){
+					toDelete.add(entry.getKey());
+				}
+			}
+			for (long e : toDelete){
+				neighborTimeout.remove(e);
+				neighbors.remove(e);
+			}
+
+			leaderTimeout -= (timeoutNow-timeoutOld);
+			timeoutOld = timeoutNow;
+			
 			
 			//boolean runElection = true;
 			//if(runElection){
@@ -62,11 +93,11 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 					prot.leaderId = node.getID();
 				}
 				// Election
-				if(time > prot.timeout){
+				if(neighborTimeout.size() == 0){
 					prot.neighbors.clear();
 				}
 				
-				if(!prot.inElection && time > prot.leaderTimeout){
+				if(!prot.inElection && prot.leaderId != node.getID() && timeoutNow > prot.leaderTimeout){ 
 					prot.triggerElection(prot, node, emitter);
 				}
 				
@@ -115,10 +146,11 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 					System.out.println("Leader   "+node.getID()+" leader elu "+content.getLeaderId()+" source "+rcv_mess.getIdSrc());
 
 					// C'est bien mon election et tout braaaah
-					prot.leaderTimeout = time + ((emitter.getLatency()*2)*(Network.size()-1));
+					prot.leaderTimeout = timeoutNow + prot.DELTA;
 					prot.leaderId = content.getLeaderId();
 					prot .leaderVal = content.getLeaderVal();
 					prot.inElection = false;
+					
 					broadcast(node, emitter, Utils.LEADER, content, true);
 				}
 				if(!(content.getIdElection() == prot.electionId && content.getIdElecInit() == prot.electInitId)){
@@ -131,7 +163,7 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 						if ((content.getLeaderVal() > prot.leaderVal) || ((content.getLeaderVal() == prot.leaderVal) && (content.getLeaderId() > prot.leaderId))  ){
 							System.out.println("Leader   "+node.getID()+" leader elu "+content.getLeaderId()+" source "+rcv_mess.getIdSrc());
 
-							prot.leaderTimeout = time + ((emitter.getLatency()*2)*(Network.size()-1));
+							prot.leaderTimeout = timeoutNow + prot.DELTA;
 							prot.leaderId = content.getLeaderId();
 							prot .leaderVal = content.getLeaderVal();
 							prot.inElection = false;
@@ -141,9 +173,11 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 				}
 				
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.PROBE){
-				
+				//je reinitialise le timeout du noeud src dans la HashMap 
+				prot.neighborTimeout.put(rcv_mess.getIdSrc(), DELTA);
 				emitter.emit(node, new Message(node.getID(),rcv_mess.getIdSrc(), Utils.REPLY, rcv_mess.getContent(), this.emit_protocol_id));
 			
+				
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.REPLY){
 				if(!prot.neighbors.contains(rcv_mess.getIdSrc())){
 					prot.neighbors.add(rcv_mess.getIdSrc());
@@ -151,20 +185,20 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 					emitter.emit(node,  new Message(node.getID(), rcv_mess.getIdSrc(), Utils.LEADER, content, this.emit_protocol_id));
 				}
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.BEACON && !prot.inElection){
-				prot.leaderTimeout = time + ((emitter.getLatency()*2)*Network.size());
+				prot.leaderTimeout = timeoutNow + prot.DELTA;
 				broadcast(node, emitter, Utils.BEACON, prot.leaderTimeout, true);
 				//emitter.emit(node, new Message(node.getID(), node.getID(),Utils.BEACON, prot.leaderTimeout, this.emit_protocol_id));
 			}else{
 				//System.out.println("PROBE");
-				if(time > prot.timeout){
-					prot.timeout = time + (emitter.getLatency()*2);
+				
+					prot.timeout = timeoutNow + (int)(DELTA / Network.size());
 					broadcast(node, emitter, Utils.PROBE, prot.timeout, false);
 					// TODO numero sequence dans le beacon
-				}
 				
-				if(prot.leaderId == node.getID() && !prot.inElection && time > prot.leaderTimeout){
+				
+				if(prot.leaderId == node.getID() && !prot.inElection && timeoutNow > prot.leaderTimeout){
 					//System.out.println("SEND BEACON");
-					prot.leaderTimeout = time + ((emitter.getLatency()*2)*Network.size());
+					prot.leaderTimeout = timeoutNow + prot.DELTA;
 					//broadcast(node, emitter, Utils.BEACON, prot.leaderTimeout, true);
 					//emitter.emit(node, new Message(node.getID(), node.getID(),Utils.BEACON, prot.leaderTimeout, this.emit_protocol_id));
 				}

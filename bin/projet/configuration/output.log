@@ -1,0 +1,12 @@
+Simulator: loading configuration
+ConfigProperties: File src/projet/configuration/config.cfg loaded.
+Simulator: starting experiment 0 invoking peersim.edsim.EDSimulator
+Random seed: 5
+
+
+
+EDSimulator: resetting
+Network: no node defined, using GeneralNode
+EDSimulator: running initializers
+EDSimulator: loaded controls [control.monitor]
+Current time: 0
