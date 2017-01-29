@@ -106,19 +106,21 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 			leaderTimeout -= (time - timeoutOld);
 			timeoutOld = time;
 			
-				// Si Premiere execution
-				if(prot.leaderId == -1){
-					System.out.println("Premiere execution "+ node.getID());
-					prot.triggerElection(prot, node, emitter);
-					prot.leaderId = node.getID();
-				}
-				// Si le noeud n'attend personne alors pas de voisins
-				
-				// Si pas en election 
-				if(!prot.inElection && prot.leaderId != node.getID() && prot.leaderTimeout <= 0){
-					System.out.println("Participe à une election "+ node.getID()+" avec "+prot.leaderId);
-					prot.triggerElection(prot, node, emitter);
-				}
+			// Si Premiere execution
+			if(prot.leaderId == -1){
+				System.out.println("Premiere execution "+ node.getID());
+				prot.triggerElection(prot, node, emitter);
+				prot.leaderId = node.getID();
+				return;
+			}
+			// Si le noeud n'attend personne alors pas de voisins
+			
+			// Si pas en election 
+			if(!prot.inElection && prot.leaderId != node.getID() && prot.leaderTimeout <= 0){
+				System.out.println("Participe à une election "+ node.getID()+" avec "+prot.leaderId);
+				prot.triggerElection(prot, node, emitter);
+				return;
+			}
 				
 			if(rcv_mess != null && rcv_mess.getTag() == Utils.ELECTION){
 				System.out.println("ELECTION "+ node.getID()+" de "+rcv_mess.getIdSrc());
@@ -199,6 +201,14 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 				}
 				
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.PROBE){
+				ElectionMessageContent content = (ElectionMessageContent)rcv_mess.getContent();
+				
+				if(content.getLeaderId() == prot.leaderId){
+					prot.leaderTimeout = DELTA;
+					List<Long> list = new ArrayList<>(prot.neighbors);
+					list.remove(rcv_mess.getIdSrc());
+					broadcastToList(node, emitter, Utils.BEACON, content, list);
+				}
 				emitter.emit(node, new Message(node.getID(),rcv_mess.getIdSrc(), Utils.REPLY, rcv_mess.getContent(), this.emit_protocol_id));
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.REPLY){
 				if(!prot.neighbors.contains(rcv_mess.getIdSrc())){
@@ -208,17 +218,18 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 				}
 			}else if(rcv_mess != null && rcv_mess.getTag() == Utils.BEACON && !prot.inElection){
 				prot.leaderTimeout = DELTA;
-				broadcast(node, emitter, Utils.BEACON, prot.leaderTimeout, true);
-				emitter.emit(node, new Message(node.getID(), node.getID(),Utils.BEACON, prot.leaderTimeout, this.emit_protocol_id));
+				List<Long> list = new ArrayList<>(prot.neighbors);
+				list.remove(rcv_mess.getIdSrc());
+				broadcastToList(node, emitter, Utils.BEACON, rcv_mess.getContent(), list);
 			}else {
 				sendProbe = true;
 			}
 			
 			if(prot.inElection && prot.awaitingAck.size() <= 0){
 				//prot.inElection = false;
-				sendProbe = false;
 				
 				if(!prot.isSourceNode){
+					sendProbe = false;
 					prot.hasSentAck = true;
 					emitter.emit(node, new Message(node.getID(),prot.parentNode, Utils.ACK, prot.prepAck, this.emit_protocol_id));
 				}else{
@@ -229,22 +240,18 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 			}
 			
 			if(sendProbe){
-					System.out.println("PROBE");
-					
-						prot.timeout = neighborsDelta;
-						for(int i = 0; i < neighbors.size(); i++){
-							if(!prot.neighborTimeout.containsKey(neighbors.get(i)))
-							prot.neighborTimeout.put(neighbors.get(i), neighborsDelta);
-						}
-						broadcast(node, emitter, Utils.PROBE, prot.timeout, false);
-						// TODO numero sequence dans le beacon
-					
-					
-					if(prot.leaderId == node.getID() && !prot.inElection && prot.leaderTimeout <= 0){
-						System.out.println("SEND BEACON");
-						//broadcast(node, emitter, Utils.BEACON, prot.leaderTimeout, true);
-						//emitter.emit(node, new Message(node.getID(), node.getID(),Utils.BEACON, prot.leaderTimeout, this.emit_protocol_id));
-					}
+				//System.out.println("PROBE");
+			
+				prot.timeout = neighborsDelta;
+				for(int i = 0; i < neighbors.size(); i++){
+					if(!prot.neighborTimeout.containsKey(neighbors.get(i)))
+					prot.neighborTimeout.put(neighbors.get(i), neighborsDelta);
+				}
+				ElectionMessageContent content = new ElectionMessageContent(prot.leaderId, prot.myValue, prot.electionId, prot.electInitId, 0);
+				
+				broadcast(node, emitter, Utils.PROBE, content, false);
+				// TODO numero sequence dans le beacon
+			
 			}
 	}
 	
@@ -322,7 +329,16 @@ public class ElectionProtocolImpl implements ElectionProtocol {
 		for(int i =0; i < Network.size(); i++){
 			Node nodal = Network.get(i);
 			if(!toNeighborsOnly || (toNeighborsOnly && prot.neighbors.contains(nodal.getID()))){
-				
+				emitter.emit(node, new Message(node.getID(), nodal.getID(), msgTag, content, this.emit_protocol_id));
+			}
+		}
+	}
+	
+	private void broadcastToList(Node node, Emitter emitter, String msgTag, Object content, List<Long> array){
+		ElectionProtocolImpl prot = (ElectionProtocolImpl) node.getProtocol(election_pid);
+		for(int i =0; i < Network.size(); i++){
+			Node nodal = Network.get(i);
+			if(array.contains(nodal.getID())){
 				emitter.emit(node, new Message(node.getID(), nodal.getID(), msgTag, content, this.emit_protocol_id));
 			}
 		}
